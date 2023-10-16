@@ -1,6 +1,7 @@
 using proyectoef;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,11 @@ app.MapGet("/dbconexion", async ([FromServices] TareasContext dbContext) =>
 {
     dbContext.Database.EnsureCreated();
     return Results.Ok("Base de datos en memoria: " + dbContext.Database.IsInMemory());
+});
+
+app.MapGet("/api/tareas", ([FromServices] TareasContext dbContext) =>
+{
+    return Results.Ok(dbContext.Tareas.Include(p => p.Categoria).Where(p => p.PrioridadTarea == proyectoef.Models.Prioridad.Baja));
 });
 
 app.Run();
